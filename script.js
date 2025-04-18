@@ -1,4 +1,5 @@
 // Reemplaza con tu URL y tu clave de API
+
 const API_URL = 'https://v3.football.api-sports.io/fixtures';
 const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
 
