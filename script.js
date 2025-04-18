@@ -1,38 +1,35 @@
-// Reemplaza con la URL de tu API y tu clave
-const API_URL = 'https://v3.football.api-sports.io/fixtures'; 
-const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf
-'; 
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f4f4f9;
+  color: #333;
+}
 
-document.getElementById('loadData').addEventListener('click', async () => {
-    try {
-        const response = await fetch(API_URL, {
-            headers: {
-                'x-rapidapi-key': API_KEY,
-                'x-rapidapi-host': 'v3.football.api-sports.io'
-            }
-        });
+h1 {
+  color: #007bff;
+  margin: 20px;
+}
 
-        if (!response.ok) {
-            throw new Error('Error al obtener datos de la API');
-        }
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-        const data = await response.json();
+button:hover {
+  background-color: #0056b3;
+}
 
-        // Renderiza los datos en la página
-        const statsDiv = document.getElementById('stats');
-        statsDiv.innerHTML = '';
-        data.response.forEach(match => {
-            statsDiv.innerHTML += `
-                <p><strong>${match.teams.home.name}</strong> vs <strong>${match.teams.away.name}</strong></p>
-                <p>Fecha: ${new Date(match.fixture.date).toLocaleDateString()}</p>
-                <p>Resultado: ${match.goals.home} - ${match.goals.away}</p>
-                <hr>
-            `;
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('stats').innerHTML = 'No se pudieron cargar las estadísticas.';
-    }
-});
+#stats {
+  margin: 20px auto;
+  max-width: 800px;
+  text-align: left;
+  padding: 15px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 5px;
+}
 
- 
