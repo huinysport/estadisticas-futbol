@@ -1,15 +1,25 @@
-import http.client
+import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
-conn = http.client.HTTPSConnection("v3.football.api-sports.io")
+var semaphore = DispatchSemaphore (value: 0)
 
-headers = {
-    'x-rapidapi-host': "v3.football.api-sports.io",
-    'x-rapidapi-key': "fdb6b60c8cad45df1afb6c25a6fbbdaf"
-    }
+var request = URLRequest(url: URL(string: "https://v3.football.api-sports.io/leagues")!,timeoutInterval: Double.infinity)
+request.addValue("fdb6b60c8cad45df1afb6c25a6fbbdaf", forHTTPHeaderField: "x-rapidapi-key")
+request.addValue("v3.football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
 
-conn.request("GET", "/leagues", headers=headers)
+request.httpMethod = "GET"
 
-res = conn.getresponse()
-data = res.read()
+let task = URLSession.shared.dataTask(with: request) { data, response, error in
+  guard let data = data else {
+    print(String(describing: error))
+    semaphore.signal()
+    return
+  }
+  print(String(data: data, encoding: .utf8)!)
+  semaphore.signal()
+}
 
-print(data.decode("utf-8"))
+task.resume()
+semaphore.wait()
