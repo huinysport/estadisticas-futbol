@@ -1,6 +1,7 @@
 console.log('El archivo script.js está funcionando correctamente');
 document.getElementById('loadData').addEventListener('click', () => {
-    alert('¡El botón está funcionando!');
+    alert('¡El botón funciona correctamente!');
+});
 });
     const API_URL = 'https://v3.football.api-sports.io/fixtures';
     const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
