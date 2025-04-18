@@ -1,3 +1,4 @@
+console.log('El archivo script.js está funcionando correctamente');
 document.getElementById('loadData').addEventListener('click', () => {
     alert('¡El botón está funcionando!');
 });
