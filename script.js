@@ -1,16 +1,10 @@
-console.log('El archivo script.js está funcionando correctamente');
-document.getElementById('loadData').addEventListener('click', () => {
-    alert('¡El botón funciona correctamente!');
-});
-});
-    const API_URL = 'https://v3.football.api-sports.io/fixtures';
-    const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
-
+document.getElementById('loadData').addEventListener('click', async () => {
     try {
+        const API_URL = 'https://v3.football.api-sports.io/fixtures';
+        const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
+
         const response = await fetch(API_URL, {
-            headers: {
-                'X-Auth-Token': API_KEY
-            }
+            headers: { 'X-Auth-Token': API_KEY }
         });
 
         if (!response.ok) {
@@ -18,20 +12,8 @@ document.getElementById('loadData').addEventListener('click', () => {
         }
 
         const data = await response.json();
-        const statsDiv = document.getElementById('stats');
-        statsDiv.innerHTML = '';
-
-        data.response.forEach(match => {
-            statsDiv.innerHTML += `
-                <p><strong>${match.teams.home.name}</strong> vs <strong>${match.teams.away.name}</strong></p>
-                <p>📅 Fecha: ${new Date(match.fixture.date).toLocaleDateString()}</p>
-                <p>⚽ Resultado: ${match.goals.home} - ${match.goals.away}</p>
-                <hr>
-            `;
-        });
+        console.log(data); // Verifica los datos en la consola
     } catch (error) {
-        console.error('Error al obtener datos:', error);
-        document.getElementById('stats').innerText = 'No se pudieron cargar los datos.';
+        console.error('Error:', error);
     }
 });
-
