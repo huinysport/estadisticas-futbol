@@ -1,35 +1,47 @@
-import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partidos de Fútbol</title>
+</head>
+<body>
+    <h1>Partidos de Fútbol</h1>
+    <button id="loadData">Cargar Datos</button>
+    <div id="stats"></div>
 
-var semaphore = DispatchSemaphore(value: 0)
+    <script>
+        // Reemplaza con tu clave API
+        const API_URL = 'https://v3.football.api-sports.io/fixtures';
+        const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
 
-var request = URLRequest(url: URL(string: "https://v3.football.api-sports.io/leagues")!, timeoutInterval: Double.infinity)
-request.addValue("fdb6b60c8cad45df1afb6c25a6fbbdaf", forHTTPHeaderField: "x-rapidapi-key")
-request.addValue("v3.football.api-sports.io", forHTTPHeaderField: "x-rapidapi-host")
-request.httpMethod = "GET"
+        document.getElementById('loadData').addEventListener('click', async () => {
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'x-rapidapi-key': API_KEY,
+                        'x-rapidapi-host': 'v3.football.api-sports.io'
+                    }
+                });
+                const data = await response.json();
 
-let task = URLSession.shared.dataTask(with: request) { data, response, error in
-    guard let data = data else {
-        print(String(describing: error))
-        semaphore.signal()
-        return
-    }
-    
-    if let httpResponse = response as? HTTPURLResponse {
-        print("Código de estado: \(httpResponse.statusCode)")
-        
-        if httpResponse.statusCode == 200 {
-            print(String(data: data, encoding: .utf8)!)
-        } else {
-            print("Error: \(httpResponse.statusCode)")
-        }
-    }
-    
-    semaphore.signal()
-}
-
-task.resume()
-semaphore.wait()
+                // Muestra los datos de los partidos
+                const statsDiv = document.getElementById('stats');
+                statsDiv.innerHTML = '';
+                data.response.forEach(match => {
+                    statsDiv.innerHTML += `
+                        <p>${match.teams.home.name} vs ${match.teams.away.name}</p>
+                        <p>Fecha: ${match.fixture.date}</p>
+                        <p>Resultado: ${match.goals.home} - ${match.goals.away}</p>
+                        <hr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error al obtener datos:', error);
+                document.getElementById('stats').innerText = 'No se pudieron cargar los datos.';
+            }
+        });
+    </script>
+</body>
+</html>
 ```
