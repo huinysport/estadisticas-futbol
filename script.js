@@ -1,47 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partidos de Fútbol</title>
+  <meta charset="UTF-8">
+  <title>Estadísticas de Partidos</title>
 </head>
 <body>
-    <h1>Partidos de Fútbol</h1>
-    <button id="loadData">Cargar Datos</button>
-    <div id="stats"></div>
+  <h1>Estadísticas del Partido</h1>
+  <div id="stats"></div>
 
-    <script>
-        // Reemplaza con tu clave API
-        const API_URL = 'https://v3.football.api-sports.io/fixtures';
-        const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
+  <script>
+    const apiKey = "fdb6b60c8cad45df1afb6c25a6fbbdaf";  // Tu API Key
+    const fixtureId = 123456;  // Reemplaza con el ID del partido que deseas ver
 
-        document.getElementById('loadData').addEventListener('click', async () => {
-            try {
-                const response = await fetch(API_URL, {
-                    headers: {
-                        'x-rapidapi-key': API_KEY,
-                        'x-rapidapi-host': 'v3.football.api-sports.io'
-                    }
-                });
-                const data = await response.json();
+    fetch(`https://v3.football.api-sports.io/fixtures/statistics?fixture=${fixtureId}`, {
+      method: "GET",
+      headers: {
+        "x-apisports-key": apiKey
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById("stats");
+      data.response.forEach(team => {
+        const teamTitle = document.createElement("h2");
+        teamTitle.textContent = team.team.name;
+        container.appendChild(teamTitle);
 
-                // Muestra los datos de los partidos
-                const statsDiv = document.getElementById('stats');
-                statsDiv.innerHTML = '';
-                data.response.forEach(match => {
-                    statsDiv.innerHTML += `
-                        <p>${match.teams.home.name} vs ${match.teams.away.name}</p>
-                        <p>Fecha: ${match.fixture.date}</p>
-                        <p>Resultado: ${match.goals.home} - ${match.goals.away}</p>
-                        <hr>
-                    `;
-                });
-            } catch (error) {
-                console.error('Error al obtener datos:', error);
-                document.getElementById('stats').innerText = 'No se pudieron cargar los datos.';
-            }
+        team.statistics.forEach(stat => {
+          const statElement = document.createElement("p");
+          statElement.textContent = `${stat.type}: ${stat.value}`;
+          container.appendChild(statElement);
         });
-    </script>
+      });
+    })
+    .catch(error => {
+      console.error("Error al obtener estadísticas:", error);
+    });
+  </script>
 </body>
 </html>
-
