@@ -2,39 +2,63 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Estadísticas de Partidos</title>
+  <title>Estadísticas de Fútbol</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .stats {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin-top: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .team {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .value {
+      margin-left: 10px;
+    }
+  </style>
 </head>
 <body>
   <h1>Estadísticas del Partido</h1>
-  <div id="stats"></div>
+  <div class="stats" id="stats">Cargando datos...</div>
 
   <script>
-    const apiKey = "fdb6b60c8cad45df1afb6c25a6fbbdaf";  // Tu API Key
-    const fixtureId = 123456;  // Reemplaza con el ID del partido que deseas ver
+    const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
+    const fixtureId = 123456; // Cambia este ID por el del partido que deseas consultar
 
-    fetch(`https://v3.football.api-sports.io/fixtures/statistics?fixture=${fixtureId}`, {
-      method: "GET",
+    fetch(`https://v3.football.api-sports.io/fixtures?id=${fixtureId}`, {
+      method: 'GET',
       headers: {
-        "x-apisports-key": apiKey
+        'x-apisports-key': API_KEY
       }
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-      const container = document.getElementById("stats");
-      data.response.forEach(team => {
-        const teamTitle = document.createElement("h2");
-        teamTitle.textContent = team.team.name;
-        container.appendChild(teamTitle);
-
-        team.statistics.forEach(stat => {
-          const statElement = document.createElement("p");
-          statElement.textContent = `${stat.type}: ${stat.value}`;
-          container.appendChild(statElement);
-        });
-      });
+      const match = data.response[0];
+      const home = match.teams.home.name;
+      const away = match.teams.away.name;
+      const stats = `
+        <div class="team">${home}</div>
+        <div>Goles: <span class="value">${match.goals.home}</span></div>
+        <div class="team">${away}</div>
+        <div>Goles: <span class="value">${match.goals.away}</span></div>
+      `;
+      document.getElementById('stats').innerHTML = stats;
     })
     .catch(error => {
-      console.error("Error al obtener estadísticas:", error);
+      document.getElementById('stats').innerHTML = 'Error al cargar los datos.';
+      console.error(error);
     });
   </script>
 </body>
