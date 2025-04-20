@@ -91,18 +91,53 @@
             `;
         }
     </script>
-<html>
-  <head>
-    <title>Mi página de fútbol</title>
-  </head>
-  <body>
-    <h1>Buscar partido</h1>
-    <div>
-      <input type="text" id="team1" placeholder="Equipo Local">
-      <input type="text" id="team2" placeholder="Equipo Visitante">
-      <button onclick="getMatchId()">Buscar ID</button>
-      <p id="result"></p>
-    </div>
-  </body>
-</html></body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Partido</title>
+</head>
+<body>
+    <h1>Buscar Partido de Fútbol</h1>
+    <input type="text" id="team1" placeholder="Equipo Local" />
+    <input type="text" id="team2" placeholder="Equipo Visitante" />
+    <button onclick="getMatchId()">Buscar</button>
+    <p id="result"></p>
+
+    <script>
+        async function getMatchId() {
+            const team1 = document.getElementById("team1").value;
+            const team2 = document.getElementById("team2").value;
+
+            // Verificar que ambos equipos fueron ingresados
+            if (!team1 || !team2) {
+                alert("Por favor, ingresa los nombres de los equipos.");
+                return;
+            }
+
+            // Aquí debes agregar tu API_KEY
+            const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf'; 
+            const url = 'https://v3.football.api-sports.io/fixtures';
+
+            const headers = {
+                'x-rapidapi-key': API_KEY,
+                'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+            };
+
+            // Llamada API para buscar partidos entre los dos equipos
+            const response = await fetch(`${url}?team=${team1}&team=${team2}`, { headers });
+            const data = await response.json();
+
+            if (data.response && data.response.length > 0) {
+                // Si se encuentra el partido
+                const matchId = data.response[0].fixture.id;
+                document.getElementById("result").innerText = `ID del Partido: ${matchId}`;
+            } else {
+                // Si no se encuentra el partido
+                document.getElementById("result").innerText = "No se encontraron partidos entre esos equipos.";
+            }
+        }
+    </script>
+</body>
 </html>
