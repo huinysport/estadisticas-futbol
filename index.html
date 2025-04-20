@@ -323,6 +323,134 @@
         .catch(error => console.error('Error fetching data:', error));
     }
   </script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas de Fútbol</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    #matchResults {
+      margin-top: 20px;
+    }
+    .match {
+      background-color: #fff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .match h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+    .match p {
+      margin: 5px 0;
+      color: #555;
+    }
+    #searchContainer {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    #searchInput {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+    }
+    #searchButton {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #searchButton:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Estadísticas de Fútbol</h1>
+
+  <div id="searchContainer">
+    <input type="text" id="searchInput" placeholder="Buscar equipo (ej. Cruz Azul)">
+    <button id="searchButton" onclick="search()">Buscar</button>
+  </div>
+
+  <div id="matchResults"></div>
+
+  <script>
+    const apiKey = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
+    const url = 'https://v3.football.api-sports.io/fixtures';
+
+    // Función que se ejecuta cuando se hace click en "Buscar"
+    function search() {
+      const teamName = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!teamName) return;  // Si no hay nombre de equipo, no hacer nada
+
+      // Limpiar los resultados previos
+      document.getElementById('matchResults').innerHTML = '';
+
+      // Realizar la solicitud a la API
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'x-apisports-key': apiKey
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          const matches = data.response.filter(match => {
+            // Filtrar los partidos que contengan el nombre del equipo, ya sea de local o visitante
+            return match.teams.home.name.toLowerCase().includes(teamName) ||
+                   match.teams.away.name.toLowerCase().includes(teamName);
+          });
+
+          if (matches.length > 0) {
+            // Mostrar los partidos encontrados
+            displayMatches(matches);
+          } else {
+            // Si no se encuentran partidos
+            document.getElementById('matchResults').innerHTML = 'No se encontraron partidos para este equipo.';
+          }
+        })
+        .catch(error => {
+          console.error('Error al obtener los datos:', error);
+          document.getElementById('matchResults').innerHTML = 'Error al obtener los datos, por favor intente más tarde.';
+        });
+    }
+
+    // Función para mostrar los partidos en la página
+    function displayMatches(matches) {
+      const resultsDiv = document.getElementById('matchResults');
+      matches.forEach(match => {
+        const matchElement = document.createElement('div');
+        matchElement.classList.add('match');
+        matchElement.innerHTML = `
+          <h3>${match.teams.home.name} vs ${match.teams.away.name}</h3>
+          <p><strong>Fecha:</strong> ${new Date(match.fixture.date).toLocaleDateString()}</p>
+          <p><strong>Goles:</strong> ${match.goals.home} - ${match.goals.away}</p>
+        `;
+        resultsDiv.appendChild(matchElement);
+      });
+    }
+  </script>
+
 </body>
 </html></body>
-</html></html>
+</html>
+
