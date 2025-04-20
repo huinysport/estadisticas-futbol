@@ -1,65 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Estadísticas de Fútbol</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f2f2f2;
-    }
-    h1 {
-      color: #2c3e50;
-    }
-    .stats {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin-top: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .team {
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .value {
-      margin-left: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Cálculo de Goles y Presión Ofensiva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #0077cc;
+        }
+        label, input {
+            margin: 5px 0;
+            display: block;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+        }
+        .resultado {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+    </style>
 </head>
 <body>
-  <h1>Estadísticas del Partido</h1>
-  <div class="stats" id="stats">Cargando datos...</div>
+    <h1>Calculadora de Goles Esperados y Presión Ofensiva</h1>
+    <form id="calculoForm">
+        <h2>Datos del Equipo Local</h2>
+        <label for="golesFavorLocal">Goles a favor</label>
+        <input type="number" id="golesFavorLocal" required>
+        <label for="tirosArcoLocal">Tiros al arco</label>
+        <input type="number" id="tirosArcoLocal" required>
+        <label for="tirosEsquinaLocal">Tiros de esquina</label>
+        <input type="number" id="tirosEsquinaLocal" required>
+        <label for="xgLocal">xG (goles esperados)</label>
+        <input type="number" id="xgLocal" step="0.01" required>
 
-  <script>
-    const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
-    const fixtureId = 123456; // Cambia este ID por el del partido que deseas consultar
+        <h2>Datos del Equipo Visitante</h2>
+        <label for="golesFavorVisitante">Goles a favor</label>
+        <input type="number" id="golesFavorVisitante" required>
+        <label for="tirosArcoVisitante">Tiros al arco</label>
+        <input type="number" id="tirosArcoVisitante" required>
+        <label for="tirosEsquinaVisitante">Tiros de esquina</label>
+        <input type="number" id="tirosEsquinaVisitante" required>
+        <label for="xgVisitante">xG (goles esperados)</label>
+        <input type="number" id="xgVisitante" step="0.01" required>
 
-    fetch(`https://v3.football.api-sports.io/fixtures?id=${fixtureId}`, {
-      method: 'GET',
-      headers: {
-        'x-apisports-key': API_KEY
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      const match = data.response[0];
-      const home = match.teams.home.name;
-      const away = match.teams.away.name;
-      const stats = `
-        <div class="team">${home}</div>
-        <div>Goles: <span class="value">${match.goals.home}</span></div>
-        <div class="team">${away}</div>
-        <div>Goles: <span class="value">${match.goals.away}</span></div>
-      `;
-      document.getElementById('stats').innerHTML = stats;
-    })
-    .catch(error => {
-      document.getElementById('stats').innerHTML = 'Error al cargar los datos.';
-      console.error(error);
-    });
-  </script>
+        <button type="button" onclick="calcular()">Calcular</button>
+    </form>
+
+    <div class="resultado" id="resultado"></div>
+
+    <script>
+        function calcular() {
+            const gfL = parseFloat(document.getElementById('golesFavorLocal').value);
+            const taL = parseFloat(document.getElementById('tirosArcoLocal').value);
+            const teL = parseFloat(document.getElementById('tirosEsquinaLocal').value);
+            const xgL = parseFloat(document.getElementById('xgLocal').value);
+
+            const gfV = parseFloat(document.getElementById('golesFavorVisitante').value);
+            const taV = parseFloat(document.getElementById('tirosArcoVisitante').value);
+            const teV = parseFloat(document.getElementById('tirosEsquinaVisitante').value);
+            const xgV = parseFloat(document.getElementById('xgVisitante').value);
+
+            const presionLocal = (taL + teL + xgL * 10).toFixed(2);
+            const presionVisitante = (taV + teV + xgV * 10).toFixed(2);
+            const totalGolesEsperados = (xgL + xgV).toFixed(2);
+
+            document.getElementById('resultado').innerHTML = `
+                <strong>Presión Ofensiva Local:</strong> ${presionLocal}<br>
+                <strong>Presión Ofensiva Visitante:</strong> ${presionVisitante}<br>
+                <strong>Total Goles Esperados:</strong> ${totalGolesEsperados}
+            `;
+        }
+    </script>
 </body>
 </html>
