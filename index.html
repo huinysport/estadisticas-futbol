@@ -139,5 +139,60 @@
             }
         }
     </script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar ID de Partido</title>
+</head>
+<body>
+  <h2>Buscar ID del partido</h2>
+  <input type="text" id="team1" placeholder="Equipo Local">
+  <input type="text" id="team2" placeholder="Equipo Visitante">
+  <button onclick="buscarPartido()">Buscar</button>
+  <div id="result"></div>
+
+  <script>
+    async function buscarPartido() {
+      const team1 = document.getElementById('team1').value.trim();
+      const team2 = document.getElementById('team2').value.trim();
+
+      if (!team1 || !team2) {
+        alert("Por favor, escribe los dos equipos.");
+        return;
+      }
+
+      const API_KEY = 'fdb6b60c8cad45df1afb6c25a6fbbdaf';
+
+      const headers = {
+        'x-apisports-key': API_KEY
+      };
+
+      const response = await fetch(`https://v3.football.api-sports.io/fixtures/headtohead?h2h=${team1}-${team2}`, {
+        method: 'GET',
+        headers: headers
+      });
+
+      const data = await response.json();
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
+
+      if (data.response && data.response.length > 0) {
+        data.response.forEach(match => {
+          const info = `
+            <p><strong>${match.teams.home.name}</strong> vs <strong>${match.teams.away.name}</strong><br>
+            Fecha: ${match.fixture.date}<br>
+            Estado: ${match.fixture.status.long}<br>
+            ID: ${match.fixture.id}</p>
+            <hr>`;
+          resultDiv.innerHTML += info;
+        });
+      } else {
+        resultDiv.innerHTML = "No se encontraron partidos entre esos equipos.";
+      }
+    }
+  </script>
 </body>
+</html></body>
 </html>
