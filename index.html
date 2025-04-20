@@ -195,4 +195,82 @@
   </script>
 </body>
 </html></body>
-</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas de Fútbol</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .match-data {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Estadísticas del Partido</h1>
+
+    <div class="container">
+        <div class="match-data" id="match-data">
+            <p>Cargando datos del partido...</p>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = "https://v3.football.api-sports.io/fixtures";
+        const apiKey = "fdb6b60c8cad45df1afb6c25a6fbbdaf"; // API Key
+
+        // Función para obtener datos del partido
+        function fetchMatchData() {
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': apiKey,
+                    'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let matchInfo = '';
+                data.response.forEach(match => {
+                    if (match.teams.home.name === 'Napoli' && match.teams.away.name === 'Cagliari') {
+                        matchInfo = `
+                            <h3>Partido: ${match.teams.home.name} vs ${match.teams.away.name}</h3>
+                            <p><strong>Fecha:</strong> ${match.fixture.date}</p>
+                            <p><strong>Goles:</strong> ${match.goals.home} - ${match.goals.away}</p>
+                            <p><strong>Estadio:</strong> ${match.fixture.venue.name}</p>
+                            <p><strong>Ciudad:</strong> ${match.fixture.venue.city}</p>
+                        `;
+                    }
+                });
+                document.getElementById('match-data').innerHTML = matchInfo || '<p>Partido no encontrado.</p>';
+            })
+            .catch(error => {
+                console.error("Error al obtener datos del partido:", error);
+                document.getElementById('match-data').innerHTML = '<p>Error al cargar los datos.</p>';
+            });
+        }
+
+        // Llamada inicial para obtener los datos del partido
+        fetchMatchData();
+    </script>
+
+</body>
+</html></html>
